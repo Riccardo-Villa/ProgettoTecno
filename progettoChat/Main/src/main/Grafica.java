@@ -41,8 +41,18 @@ public class Grafica extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jButton1.setText("InizioConnessione");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         jButton2.setText("TerminaConnesione");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
 
         jButton3.setText("Nickname");
         jButton3.addActionListener(new java.awt.event.ActionListener() {
@@ -52,6 +62,11 @@ public class Grafica extends javax.swing.JFrame {
         });
 
         jButton4.setText("Messaggio");
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton4ActionPerformed(evt);
+            }
+        });
 
         jTextArea1.setColumns(20);
         jTextArea1.setRows(5);
@@ -100,20 +115,50 @@ public class Grafica extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        DatagramSocket server = new DatagramSocket(2003);
-
-    byte[] buffer = new byte[1500];
-
-    DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
-
-    server.receive(packet);
-
-    byte[] dataReceived = packet.getData(); // copia del buffer dichiarato sopra
-
-    String messaggioRicevuto = new String(dataReceived, 0, packet.getLength());
-
-    System.out.println(messaggioRicevuto);
+        //invio nicknmae
+        String stringa_nick = nick.toCSV();
+        byte[] buffer_invio = stringa_nick.getBytes();
+        DatagramPacket pacchetto_invio = new DatagramPacket(buffer_invio, buffer_invio.length);
+        Condivisa d = Condivisa.getInstance();
+        pacchetto_invio.setAddress(messaggioContenitore.getIndirizzo_ip());
+        pacchetto_invio.setPort(2003);
+        Main_socket.send(pacchetto_invio);
     }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        //chiude connessione
+        DatagramPacket pacchetto = new DatagramPacket(buffer, buffer.length);
+        Main.receive(pacchetto); 
+        pacchetto = null;
+    }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+        //invio del messaggio
+        String stringa_messaggio = messaggioContenitore.toCSV();
+        byte[] buffer_invio = stringa_messaggio.getBytes();
+        DatagramPacket pacchetto_invio = new DatagramPacket(buffer_invio, buffer_invio.length);
+        Condivisa d = Condivisa.getInstance();
+        pacchetto_invio.setAddress(messaggioContenitore.getIndirizzo_ip());
+        pacchetto_invio.setPort(2003);
+        Main_socket.send(pacchetto_invio);
+    }//GEN-LAST:event_jButton4ActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        //apre connessione
+        DatagramSocket Main = new DatagramSocket(2003);
+
+        byte[] buffer = new byte[1500];
+        DatagramPacket pacchetto = new DatagramPacket(buffer, buffer.length);
+        Main.receive(pacchetto);
+        String indirizzoRemoto = pacchetto.getAddress().toString();
+        int portaRemota = pacchetto.getPort();
+        byte[] datiRicevuti = pacchetto.getData();
+        String messaggioContenitore = new String(datiRicevuti);
+        System.out.println("Server: indirizzo: " + indirizzoRemoto);
+        System.out.println("Server: Porta:" + portaRemota);
+        System.out.println("Server: Messaggio: " + messaggioContenitore);
+        return messaggioContenitore;
+    }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
      * @param args the command line arguments

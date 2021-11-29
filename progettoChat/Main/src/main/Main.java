@@ -20,6 +20,10 @@ public class Main {
      * @param args the command line arguments
      */
     public static void main(String[] args) throws IOException {
+
+    static void receive(DatagramPacket pacchetto) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
     private DatagramSocket a;
     private DatagramPacket packetRicevuto;
     private String messaggioRicevuto;
@@ -37,25 +41,15 @@ public class Main {
 
         System.out.println(messaggioRicevuto);
     }
-    //invio del bottone
-    public void invia(String risposta) throws IOException{
-        byte[] responseBuffer = risposta.getBytes();
-        DatagramPacket responsePacket = new DatagramPacket(responseBuffer, responseBuffer.length);
-        responsePacket.setAddress(packetRicevuto.getAddress());
-        responsePacket.setPort(packetRicevuto.getPort());
-        a.send(responsePacket);
-    }
     
     public char analizza(){
-        //restituisce operazione da fare
-        //1;12;29
+
         return messaggioRicevuto.charAt(0);
     }
-    //12;49
+
     public String getContenuto(){
         int index = messaggioRicevuto.indexOf(";");
         String c = messaggioRicevuto.substring(index + 1, messaggioRicevuto.length());
         return c;
-    }
-    
+    }  
 }
